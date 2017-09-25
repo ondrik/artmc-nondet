@@ -1,0 +1,42 @@
+(* This is a specification file to be used with the Timbuk tutorial *)
+
+Ops cons:2 a:0 b:0 nil:0 app:2 rev:1
+
+Vars x y z 
+
+TRS R
+    app(nil, x) -> x
+    app(cons(x, y), z) -> cons(x, app(y, z))
+    rev(nil) -> nil
+    rev(cons(x, y)) -> app(rev(y), cons(x, nil))
+
+
+Automaton A0
+States qrev qlab qlb qa qb
+Description  qrev: "rev applied to lists where a are before b"
+             qlab: "lists where a are before b (possibly empty)"
+             qlb : "lists of b (poss. empty)"     
+Final States qrev
+Transitions
+        rev(qlab) -> qrev          nil -> qlab          cons(qa, qlab) -> qlab 
+        cons(qa, qlb) -> qlab      nil -> qlb           cons(qb, qlb) -> qlb
+        a -> qa                    b -> qb
+
+
+Automaton Problem1
+States qa qb qany qlb qlab qnil
+Description
+        qany: "Any flat list made of a and b"
+        qlb : "Any flat list made of a and b, beginning with a b"
+        qlab: "Any flat list with at least an a followed by a b"
+Final States qlab
+Transitions
+        a -> qa
+        b -> qb
+        cons(qa, qany) -> qany
+        cons(qb, qany) -> qany
+        nil -> qany
+        cons(qb, qany) -> qlb
+        cons(qa, qlb) -> qlab
+        cons(qb, qlab) -> qlab
+        cons(qa, qlab) -> qlab

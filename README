@@ -1,0 +1,83 @@
+ARTMC-nondet (L. Holik and T. Vojnar, FIT BUT)
+==============================================
+
+This is a very prototype implementation of a simple ARTMC verification tool. It
+is old, not maintained, messy, it was not meant for distribution, but whoever is
+interested is welcome to look at it. It is too a large extent based on Taml tree
+automata library which is a part of Timbuk (with some very cosmetic changes done
+just in order to be able to build it together with the rest of the tool).
+
+Tested with Ocaml 3.11.2 (an older version could have troubles) on Ubuntu 11.04
+on Ubuntu Linux Lucid Lynx (10.04), and Fedora 15/64bit.
+
+Usage:
+------
+
+Clean everything:
+-----------------
+
+make cleanall
+
+Clean artmc only (does not kill Timbuk ...):
+--------------------------------------------
+
+make clean
+
+Compiling and running a binary executable:
+------------------------------------------
+
+make bin
+./runbin
+
+The binary runs an experiment which is specified in the Makefile by the variable
+EXPR_SRC. This can be changed by commenting the current setting and uncommenting
+another one. An experiment means verification of some pointer programs or simple
+communication protocols. Sources of the experiments are located in the folder
+called experiments.
+
+
+Compiling bytecode of Timbuk (Taml) and ARTMC (as a library) 
+and running ocaml interpreter with the library loaded:
+------------------------------------------------------------
+
+make run
+
+Then in the interpreter, type:
+
+#use "example_transducers.ml";;
+
+This will run commands contained in the file example_transducers.ml where it is
+shown how to specify an automaton and a transducer and how to apply the
+transducer on the automaton. Next, one can freely experiment on the command
+line.
+
+If you later prefer not to execute the provided examples, just perform the open
+statements from the example file and then use the command line.
+
+For more information, you can also look into the Makefile.
+
+Remarks on implementation of transducers:
+------------------------------------------
+
+There are two implementations of transducers in the provided extension of
+Timbuk:
+
+1) structure preserving 
+   - works without problems
+2) general
+   - It is based on Ocaml String module 
+     http://caml.inria.fr/pub/docs/manual-ocaml/libref/String.html. 
+   - The implementation is based on the Engelfried'75 decomposition. Each 
+     transducer can be decomposed into 3 separate simple parts. However, there 
+     is no implementation transforming a general transducer to these 3-parts. 
+     So you have to transform it manually or write the parser yourself...
+   - See, e.g., 
+     tree-transducer-0.1/experiments/broadcasting-structure_change-easy.input.ml
+   - In the later developement of ARTMC, we have not use this feature, hence it
+     can be buggy, slow, ....
+
+Basically, both implementations allow:
+- applying a transducer on an automaton,
+- a reverse aplication of a transducer on an automaton.
+
+In ARTMC, we did not need more operations, so they are not implemented.

@@ -1,0 +1,111 @@
+Timbuk 2.2:
+
+-- Corrected a bug in tree automata union (found by Tomas Vojnar).
+
+-- Changed for mouse Right button to folding in Tabi and Shift-Right-click to
+   switching between tree and linear representation. (Some people don't have a 
+   mouse with three buttons :-)
+
+-- Corrected a bug on the 's' that was often showing the completed automaton of the
+   i-1th step instead of the current one.
+
+-- Corrected a bug with collapsing rules (found by Yohan Boichut).
+
+
+Timbuk 2.1:
+
+++ Suppressed the curryfied constructor used in Tabi files, which is rejected by
+   ocaml 3.07.
+
+++ Finally suppressed the labels in the .mli files which are rejected by ocamldep 3.07
+
+
+Timbuk 2.0:
+
+++ Added --dynamic, --static, --fstatic, -f, -o, --strat options to Timbuk:
+
+	Options: --dynamic        for usual completion algorithm (default)
+        	 --static         to activate the static compilation of matching and 
+               		          normalisation (needs a complete set of prior and 
+                        	  norm rules) 
+	         --fstatic        to activate the static compilation of matching and 
+        	                  normalisation. If the set of prior and norm rules is
+         	                  not complete, a transition not covered by the rules is
+                       	          normalised using a single new state #qstatic#
+	         -f file          to read timbuk commands from a file
+         	 -o file          output timbuk execution trace in a file
+
+
+	         --strat followed by keywords:
+	           exact           (exact normalisation with prioritary rules)
+	           prior           (normalisation with prioritary rules
+	           norm_rules      (normalisation with approximation rules)
+	           auto            (automatic normalisation with new states)
+	           auto_conf       (similar to 'auto' but asks for confirmation first)
+	           auto_prior      (automatic normalisation with new states where
+	                            new transitions are stored as prioritary rules)
+
+	           auto_prior_conf (similar to 'auto_prior' but asks for confirmation first)
+		   manual_norm     (manual addition of normalisation rules)
+                   manual_norm_conf(similar to 'manual_norm' but asks for confirmation first)
+	           manual          (manual normalisation of transitions)
+	           manual_conf     (similar to 'manual' but asks for confirmation first)
+
+
+++ Added 'Taml' a standalone Ocaml toplevel with preloaded timbuk library functions over tree
+   automata, terms, term rewriting systems, etc. This replaces the old "CALCULATOR MODE" timbuk 
+   ml files.
+
+++ Added the Tree Automata Browsing Interface (TABI) for automata inspection. Tabi is a
+   standalone application but can also be called from Timbuk and Taml.
+
+++ Added the abbility to define approximation equations (in specification and at runtime)
+
+++ Added the exact strategy which is always terminating and exact on some specific syntactic classes 
+   (see documentation)
+
+++ Changed the (w) command so that it writes to disk the TRS, the current completed automaton, 
+   the initial automaton, the current approximation and the list of automaton used for intersection in a same file
+
+++ Added the (p) Timbuk command for searching a pattern containing symbols, variables and states, 
+   in the completed automaton.
+
+++ Added the (o) Timbuk command for computing intersection between the completed automaton and some
+   external automaton read in a file.
+
+++ Added the (b) Timbuk command for browsing the current completed automaton with Tabi. Tabi also gives
+   the ability to construct some merging rules graphically.
+
+++ Added the (f) Timbuk command to forget some completion steps.
+
+++ Added the (d) Timbuk command for displaying the current TRS used for completion.
+
+++ Added the (m) Timbuk command for merging some states in the completed automaton.
+
+++ Added the (e) Timbuk command for consulting/adding the current approximation rules.
+
+++ Added the (g) Timbuk command for consulting/adding normalisation rules interactively
+
+++ Added the (det) Timbuk command for determinising the current completed automaton.
+
+++ Added the completion step number to Timbuk.
+
+++ Extended the norm_rules syntax to use normalisation rules where it is possible to achieve matching
+   on the state labels. For instance it is possible to define such a norm rule:
+
+   [encr(pubkey(q(x)), m) -> qstore] -> [m -> q(secret(x))]
+
+   in **dynamic mode** only, where q is here a state operator of arity 1 (defined using 'States q:1' syntax).
+
+++ Added the 'Import' keyword in the specification language to import tree automata state operators in the 
+   approximation.
+
+++ Added the 'Set' keyword in the specification language to define automata through their finite language, i.e.
+   finite set of terms which are compiled into a deterministic tree automaton.
+
+.. Optimised standard completion mode (dynamic) in Timbuk.
+
+-- Discarded some bugs.
+
+
+Version 1.0 First release

@@ -1,0 +1,236 @@
+(* This is a specification file to be used with the Timbuk tutorial *)
+
+Ops 
+	goal:2 store:2 null:0 encr:3 pubkey:1 privkey:1 N:2 cons:2 ident:1 o:0 s:1 
+	A:0 B:0 connect:3 
+
+Vars	x y z u v w m
+
+
+TRS R1 
+
+  store(goal(ident(x), ident(y)), m) ->
+        store(encr(pubkey(y), x, cons(N(x, y), ident(x))), m)
+
+  store(encr(pubkey(y), x, cons(z, ident(u))), m) -> 
+	store(encr(pubkey(u), y, cons(z, cons(N(y, u), ident(y)))),m)
+
+  store(encr(pubkey(y), x, cons(N(y, z), cons(u, ident(z)))),m) ->
+	store(encr(pubkey(z), y, u), connect(y, z, x))
+
+  store(encr(pubkey(y), x, N(y, z)),m) -> store(connect(y, z, x), m)
+	  
+
+(* intruder *)
+   
+  store(cons(x,y), m) -> store(x, y)
+  store(x, y) -> store(cons(x, y), x)
+
+  store(encr(privkey(x), y, z), pubkey(x)) -> store(z, pubkey(x))
+  store(z, pubkey(x)) -> store(encr(pubkey(x), o, z), pubkey(x))
+
+  store(encr(pubkey(x), y, z), privkey(x)) -> store(z, privkey(x))  
+  store(z, privkey(x)) -> store(encr(privkey(x), o, z), privkey(x))
+
+
+(* store is an AC operator *)
+
+  store(x, y) -> store(y, x)
+  store(store(x, y), z) -> store(x, store(y, z))
+  store(x, store(y, z)) -> store(store(x, y), z)
+
+
+Automaton A0
+
+States Ilabel:0 qnet:0 Alabel:0 Blabel:0 Aident:0 Bident:0 Iident:0 NAB:0 NAA:0 NBB:0 NBA:0 NI:0
+Final States qnet
+
+Prior
+o -> Ilabel
+s(Ilabel) -> Ilabel
+A -> Alabel
+B -> Blabel
+ident(Alabel) -> Aident
+ident(Blabel) -> Bident
+ident(Ilabel) -> Iident
+
+N(Alabel, Blabel) -> NAB
+N(Alabel, Alabel) -> NAA
+N(Blabel, Blabel) -> NBB
+N(Blabel, Alabel) -> NBA
+
+N(Ilabel, Alabel) -> NI
+N(Ilabel, Ilabel) -> NI
+N(Alabel, Ilabel) -> NI
+
+N(Ilabel, Blabel) -> NI
+N(Blabel, Ilabel) -> NI
+
+
+Transitions
+
+null -> qnet
+store(qnet, qnet) -> qnet
+(* Intruder knows every agents identity *)
+ident(Alabel) -> qnet
+ident(Blabel) -> qnet
+ident(Ilabel) -> qnet
+
+(* Intruder has every public keys *)
+pubkey(Alabel) -> qnet
+pubkey(Blabel) -> qnet
+pubkey(Ilabel) -> qnet
+
+(* Intruder has the private key of all agents apart from A and B *)
+privkey(Ilabel) -> qnet
+
+(* Every agent intend to communicate with every other agent *)
+goal(qnet, qnet) -> qnet
+
+
+
+
+(* Honnest nonces (NAA, NBB, NAB, NBA) captured by the intruder *)
+
+Automaton Problems
+States honnest_nonce TF contains_secret Aident Bident Iident Ilabel Alabel Blabel
+Final States contains_secret
+Transitions
+
+store(honnest_nonce, TF) -> contains_secret
+
+o -> Ilabel
+s(Ilabel) -> Ilabel
+A -> Alabel
+B -> Blabel
+ident(Alabel) -> Aident
+ident(Blabel) -> Bident
+ident(Ilabel) -> Iident
+
+N(Alabel, Blabel) -> honnest_nonce
+N(Alabel, Alabel) -> honnest_nonce
+N(Blabel, Blabel) -> honnest_nonce
+N(Blabel, Alabel) -> honnest_nonce
+
+goal(TF, TF) -> TF
+store(TF, TF) -> TF
+null -> TF
+encr(TF, TF, TF) -> TF
+pubkey(TF) -> TF
+privkey(TF) -> TF
+N(TF, TF) -> TF
+cons(TF, TF) -> TF
+ident(TF) -> TF
+o -> TF
+s(TF) -> TF
+A -> TF
+B -> TF
+connect(TF, TF, TF) -> TF
+
+
+
+Approximation Secret
+	States qnet qAcontent qBcontent qAkey qBkey Alabel Ilabel Blabel 
+	Rules 
+
+	      [store(x, y) -> z] -> [x -> qnet  y -> qnet]
+
+(* Every message component encrypted by the public key of A or B goes in a dedicated state *)
+
+	      [encr(pubkey(Alabel), x, y) -> z] -> 
+	      [ y -> qAcontent 
+	        pubkey(Alabel) -> qAkey]
+
+	      [encr(pubkey(Blabel), x, y) -> z] -> 
+	      [ y -> qBcontent 
+	        pubkey(Blabel) -> qBkey]
+
+(* Similar for other agents but it goes directly in qnet, since it can anyway be decrypted by the 
+   intruder *)
+
+	      [encr(pubkey(Ilabel), x, y) -> z] -> 
+	      [ y -> qnet
+	        pubkey(Ilabel) -> qnet]
+
+
+(* In the storage states, everything is collapsed (structure of the message is not important) *)
+
+	      [cons(x, y) -> qAcontent] -> [y -> qAcontent]
+	      [cons(x, y) -> qBcontent] -> [y -> qBcontent] 
+
+	      [cons(x,y) -> qnet]       -> [y -> qnet]   
+
+	      (* can be summed up by [cons(x, y) -> z] -> [y -> z] *)
+
+(* Every remaining subterm not normalized by those rules is normalized by qnet *)
+
+	      [x -> y] -> [z -> qnet]
+
+
+
+Approximation Secret2
+	States q:1 secret:1 qnet key:1 Alabel Ilabel Blabel 
+	Rules 
+
+	      [store(x, y) -> z] -> [x -> qnet  y -> qnet]
+
+	      [encr(pubkey(Ilabel), x, y) -> z] -> 
+	      [ y -> qnet
+	        pubkey(Ilabel) -> qnet]
+
+(* Every message component encrypted by someone else thant the intruder goes in a dedicated state *)
+
+	      [encr(pubkey(u), x, y) -> z] -> 
+	      [ y -> q(secret(u))
+	        pubkey(u) -> q(key(u))]
+
+(* In the storage states, everything is collapsed (structure of the message is not important) *)
+
+	      [cons(x, y) -> z] -> [y -> z]
+
+
+
+Approximation SecAndAuth
+	States qnet qAcontent qBcontent qAcontent1 qBcontent1 qAcontent2 qBcontent2 qAkey 
+	       qBkey Alabel Ilabel Blabel qAA qAB qBA qBB
+
+	Rules 
+
+	      [store(x, y) -> z] -> [x -> qnet  y -> qnet]
+
+(* Every message component encrypted by X for Y goes in a dedicated state *)
+
+	      [encr(pubkey(Alabel), Alabel, y) -> z] -> 
+	      [ y -> qAA
+	        pubkey(Alabel) -> qAkey]
+
+	      [encr(pubkey(Alabel), Blabel, y) -> z] -> 
+	      [ y -> qAB
+	        pubkey(Alabel) -> qAkey]
+
+	      [encr(pubkey(Blabel), Blabel, y) -> z] -> 
+	      [ y -> qBB
+	        pubkey(Blabel) -> qBkey]
+
+	      [encr(pubkey(Blabel), Alabel, y) -> z] -> 
+	      [ y -> qBA
+	        pubkey(Blabel) -> qBkey]
+
+	      [x -> y] -> [pubkey(Alabel) -> qAkey]
+	      [x -> y] -> [pubkey(Blabel) -> qBkey]
+	      [x -> y] -> [pubkey(Ilabel) -> qnet]
+
+	      [encr(x, y, z) -> u] -> [ z -> qnet ]
+
+(* In the storage states, everything is collapsed (structure of the message is not important) *)
+
+	      [cons(x, y) -> qAA] -> [y -> qAA]
+	      [cons(x, y) -> qAB] -> [y -> qAB]
+	      [cons(x, y) -> qBA] -> [y -> qBA]
+	      [cons(x, y) -> qBB] -> [y -> qBB]
+
+	      [cons(x,y) -> qnet] -> [x -> qnet  y -> qnet]  
+	      [x -> y] -> [z -> qnet]
+
+
+

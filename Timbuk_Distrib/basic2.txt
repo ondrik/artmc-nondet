@@ -1,0 +1,21 @@
+(* This is a specification file to be used with the Timbuk tutorial *)
+
+Ops f:1 g:1 a:0
+
+Vars x 
+
+TRS R
+    f(x) -> g(f(x))
+
+
+Set init
+    f(f(f(a)))
+
+
+Set check1
+    f(g(f(a)))
+    g(f(g(a)))
+
+
+Set check2
+    g(g(g(g(g(g(g(g(f(a)))))))))

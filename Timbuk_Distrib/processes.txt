@@ -1,0 +1,31 @@
+(* This is a specification file to be used with the Timbuk tutorial *)
+
+Ops 
+   S:4 Proc:2 cons:2 null:0 busy:0 free:0 s:1 o:0
+
+Vars x y z u 
+
+TRS R1      
+   S(Proc(free, cons(x, y)), z, free, u) -> 
+               S(Proc(busy, cons(x, y)), z, busy, u)
+   S(Proc(busy, cons(x, y)), z, busy, u) -> 
+               S(Proc(free, y), z, free, s(u))
+   S(z,Proc(free, cons(x, y)), free, u) -> 
+               S(z, Proc(busy, cons(x, y)), busy, u)
+   S(z, Proc(busy, cons(x, y)), busy, u) -> 
+               S(z, Proc(free, y), free, s(u))
+   S(Proc(x, null), Proc(y, null), z, u) -> 
+               S(Proc(x, null), Proc(y, null), z, u)
+
+Automaton A1
+States q0 q1 q2 q3 q4
+Final States q0
+Transitions 
+	    S(q1, q1, q2, q3) -> q0
+	    free -> q2
+	    o -> q3
+	    Proc(q2, q4) -> q1
+	    null -> q4
+	    cons(q3, q4) -> q4
+
+

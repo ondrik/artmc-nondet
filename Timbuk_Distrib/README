@@ -1,0 +1,243 @@
+
+-------------------       TIMBUK 2.1          --------------------
+------------------- A Tree Automata Library   --------------------
+
+                     (For Objective Caml)
+
+includes:
+
+- Timbuk: tree automata completion engine for reachability analysis 
+          over Term Rewriting Systems
+
+- Taml: an Ocaml toplevel with functions on Bottom-up Non-Deterministic 
+        Tree Automata such that
+    
+         - boolean operations: intersection, union, inversion, etc...
+         - emptyness decision,
+         - cleaning, renaming,
+         - determinisation,	
+         - parsing, pretty printing,
+         - writing complete specifications or computed automata to disk
+         - normalisation of transitions
+         - and some more...
+
+- Tabi: a Tree Automata Browsing Interface for visual automata 
+        inspection.
+
+See file Manual.pdf for the documentation of those tools.
+
+------------------------------------------------------------------
+Timbuk: Copyright (C) 2000-2003 Thomas Genet and Valérie Viet Triem Tong 
+Taml:   Copyright (C) 2003 Thomas Genet
+Tabi:   Copyright (C) 2003 Thomas Genet and [Boinet Matthieu, Brouard Robert, 
+        Cudennec Loic, Durieux David, Gandia Sebastien, Gillet David, 
+        Halna Frederic, Le Gall Gilles, Le Nay Judicael, Le Roux Luka, 
+        Mallah Mohamad-Tarek, Marchais Sebastien, Martin Morgane, 
+        Minier François, Stute Mathieu] -- aavisu project team for
+        french "maitrise" level (4th University year) 2002-2003 at
+	IFSIC/Universite de Rennes 1.
+
+
+Those programs are distributed under the GNU LGPL. 
+See the enclosed file COPYING and LGPL
+------------------------------------------------------------------
+
+http://www.irisa.fr/lande/genet/timbuk/               6th February 2003
+
+(tested with Ocaml 3.04, 3.06 and 3.07:  http://caml.inria.fr/ocaml/)
+
+
+In the next sections we successively give:
+- Prerequisites for running the Timbuk library
+- Installation instructions
+- Running instructions
+- the content of source distributions 
+
+
+* PREREQUISITES:
+
+The timbuk library is distributed in two different forms: source,
+and Windows binary files.
+
+- Ocaml 3.04 or greater is necessary (unless you have Windows and
+  downloaded the Timbuk Windows binary files). Timbuk and Taml alone
+  may be compiled and runned with older distributions of Ocaml but it
+  has not be tested.
+
+- gmake is necessary for recompiling under Unix.
+
+- Tcl/Tk is necessary for compiling and running Tabi. However Timbuk
+  and Taml can be compiled and runned without Tcl/Tk. So if you
+  encounter some problems with your Tcl/Tk installation, download 
+  (windows) or compile (unix) Timbuk and Taml versions without 
+  Tabi. The versions of Tcl/Tk which are necessary for Tabi are:
+
+  + from Tcl 7.5/Tk 4.1 up to Tcl/Tk 8.3 for UNIX. To check if your 
+    installation of Ocaml and Tcl/Tk works, simply search for the 
+    labltk binary on your system and execute it in command line 
+    window: it should start an Ocaml interpreter with Tcl/Tk support.
+    If this does not work, check your Ocaml installation first or 
+    recompile Ocaml from the sources so that Tcl/Tk is taken into 
+    account.  
+
+  + Tcl/Tk 8.3 for WINDOWS
+  (http://prdownloads.sourceforge.net/tcl/tcl832.exe for instance)
+
+  Furthermore, on WINDOWS, after installing Tcl/Tk 8.3, your Tcl/Tk
+  library must be in the PATH variable of your system. To find its
+  location simply search for the file tk83.dll on your system. Then,
+  if it is in the directory (say):
+
+    C:/Program Files/Tcl/bin
+
+  you have to add this directory to your PATH:
+
+    set PATH= %PATH%;C:/Program Files/Tcl/bin
+
+  The easiest way is to add this line to your autoexec.bat file or to
+  your system configuration by the system control panel (for windows
+  XP), see windows help on the 'environment variable' subject. 
+
+
+
+* INSTALL
+
+* INSTALL from Source distribution
+
+-> Unix users
+   The entire source distribution can be compiled with 'gmake' and any
+   complete installation of Ocaml (from 3.04). If your ocaml
+   installation is not complete you will need at least:
+   
+   - ocamlrun, ocamlc, camlp4: mandatory for compiling Timbuk, Taml, Tabi.
+   - ocamlmktop: needed for Taml.
+   - labltk ocaml library: needed for Tabi.
+   - ocamldep: needed if extending the source and recompiling.
+   - ocamlopt: needed if compiling in native code.
+   
+   
+   Compiling:
+   
+   In the directory containing the source files of the Timbuk library, typing:
+
+   'gmake'                     produces byte code versions of 'timbuk', 'taml'
+			       and 'tabi' with browsing facilities with Tabi 
+                               activated in Timbuk and Taml.
+
+
+   For a more selective compilation, you can use the following directives: 
+   
+   
+   'gmake timbuk' 		produces a byte code version of timbuk alone
+   'gmake tabi	'   		produce a byte code version of tabi alone
+   'gmake taml'   		produce an ocaml toplevel with tree automata functions
+   'gmake taml-tabi' 		produce an ocaml toplevel with tree automata
+                           	functions and tabi browsing facilities
+
+   'gmake binary' 		produce a native code version of timbuk and
+	    			tabi (with tabi browsing activated in timbuk),
+	   			and a bytecode version of taml.
+
+   'gmake timbuk-binary' 	produce a native code version of timbuk alone
+   'gmake tabi-binary' 		produce a native code version of tabi alone
+   
+   'gmake debug' 		produce a byte code version of timbuk with debug 
+                                information
+   'gmake clean' 		cleans all
+   'gmake depend' 		reinspect dependencies between files (file .depend 
+                                must exist in the directory)
+
+-> Windows users
+   The entire source distribution can be compiled with any complete
+   installation of Ocaml (from 3.04) and the two poorman's
+   compilation scripts 'Makefile.bat' and 'MakefileNoTabi.bat'
+   included in the source distribution. If your Ocaml installation is not
+   complete you will need at least: 
+
+   - ocamlrun, ocamlc, camlp4: mandatory for compiling Timbuk, Taml, Tabi.
+   - ocamlmktop: needed for Taml.
+   - labltk ocaml library: needed for Tabi.
+   - ocamldep: needed if extending the source and recompiling.
+   - ocamlopt: needed if compiling in native code.
+   
+   
+   Compiling in a DOS Command Window:
+   
+   Simply type 'Makefile.bat' in the directory containing the source
+   files of the Timbuk library to produce byte code versions of 'timbuk',
+   'taml' and 'tabi' with browsing facilities with Tabi activated in
+   Timbuk and Taml.
+   
+   Otherwise, to build Timbuk and Taml without Tabi, simply type
+   'MakefileNoTabi.bat'.
+ 
+
+* INSTALL from Windows Binary files archive
+
+Simply download and extract all the files of the archive in a directory. 
+(Binary archives can be found on http://www.irisa.fr/lande/genet/timbuk/)
+
+
+* RUNNING:
+
+-> For unix users:
+
+    To run Timbuk, Taml or Tabi, simply type: 'timbuk', 'taml' or
+    'tabi' in the directory where you installed the source files.
+    Have a look to the file 'Manual.pdf' for documentation
+    on each of these tools.
+
+
+-> For windows users:
+
+
+(+) If you recompiled the Timbuk library from the source, first check
+    that ocamlrun is in your PATH:  
+
+    type 'ocamlrun' 
+
+    in a DOS command window.
+
+    this should result in the following message: "No bytecode file
+    specified." Otherwise, check your Ocaml installation first, or
+    your PATH variable definition.
+
+    Then, in the DOS command window and in the directory where source
+    files have been compiled, you can run Timbuk, Taml or Tabi, by
+    typing: 
+
+    ocamlrun .\timbuk 
+
+    ocamlrun .\taml
+
+    ocamlrun .\tabi
+
+
+
+(+)  For downloaded binary files (.exe files): you can run taml and tabi by
+     double-clicking on their icons. Timbuk should be runned in a DOS
+     Command window: in the directory where you downloaded the .exe
+     files,  simply type the command 'timbuk'. Note that Taml and Tabi
+     can also be invocated on the command line by: commands 'taml' and
+     'tabi'. 
+	
+    Have a look to the file 'Manual.pdf' for documentation
+    on each of these tools.
+
+
+* RUNNING General remark on Taml: Taml needs to be runned in the same
+directory as the downloaded .cmo files and the .ocamlinit file. So the
+taml tool cannot be moved away unless you move it together with all
+this files. Note that, this is not the case for Timbuk and Tabi which
+are standalone tools. 
+
+-----------------------------------------------------------------------
+
+DISCLAIMER: Most of the functions of the library are implemented
+straightforwardly with nearly no optimisation and in a functional
+style. However, optimisations are welcome and can also be proposed to
+us for implementation.
+
+Bug Report: Please report comments, improvements and bugs to
+Thomas.Genet@irisa.fr 
+
